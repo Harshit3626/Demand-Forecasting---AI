@@ -34,19 +34,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Load / generate data ───────────────────────────────────────────────────
+# ── Load real Rossmann data ────────────────────────────────────────────────
 @st.cache_data
-def load_data():
+def load_data(store_id=1):
     import sys, os
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    try:
-        df = pd.read_csv("data/sales_data.csv", parse_dates=["date"])
-    except FileNotFoundError:
-        from data.generate_data import generate_demand_data
-        df = generate_demand_data()
-        os.makedirs("data", exist_ok=True)
-        df.to_csv("data/sales_data.csv", index=False)
-    return df.sort_values("date").reset_index(drop=True)
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from data.eda import load_data as _load
+    return _load(train_path="data/train.csv", store_path="data/store.csv", store_id=store_id)
+
 
 
 @st.cache_data
@@ -178,8 +173,10 @@ with col_b:
     dow = df.groupby("day_of_week")["demand"].mean()
     fig4, ax4 = plt.subplots(figsize=(7, 4))
     colors2 = ["#f87171" if i >= 5 else "#60a5fa" for i in range(7)]
-    ax4.bar(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-            dow.values, color=colors2, edgecolor="white", linewidth=0.5)
+    day_names = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    dow_labels = [day_names[i] for i in dow.index]
+    colors2 = ["#f87171" if i >= 5 else "#60a5fa" for i in dow.index]
+    ax4.bar(dow_labels, dow.values, color=colors2, edgecolor="white", linewidth=0.5)
     ax4.set_title("Avg Demand by Day of Week", fontweight="bold")
     ax4.set_ylabel("Units"); ax4.grid(axis="y", alpha=0.25)
     plt.tight_layout()

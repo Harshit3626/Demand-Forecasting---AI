@@ -1,7 +1,7 @@
 """
 AI-Driven Demand Forecasting & Inventory Optimization System
 ============================================================
-Run this to: generate data → EDA → train ARIMA → train LSTM
+Run this to: load real data → EDA → train ARIMA → train LSTM
 Then run the Streamlit dashboard separately.
 """
 
@@ -10,31 +10,23 @@ sys.path.append(os.path.dirname(__file__))
 
 def main():
     print("=" * 60)
-    print("  AI-Driven Demand Forecasting System")
+    print("  AI-Driven Demand Forecasting System (Rossmann Dataset)")
     print("=" * 60)
 
-    # Step 1: Generate data
-    print("\n📊 STEP 1: Generating synthetic dataset...")
-    os.makedirs("data", exist_ok=True)
-    from data.generate_data import generate_demand_data
-    df = generate_demand_data()
-    df.to_csv("data/sales_data.csv", index=False)
-    print(f"   ✅ {len(df)} records saved to data/sales_data.csv")
-
-    # Step 2: EDA
-    print("\n📊 STEP 2: Running EDA...")
+    # Step 1: Load real data
+    print("\n📊 STEP 1: Loading Rossmann real-world dataset...")
     from data.eda import load_data, eda_summary, preprocess
-    df = load_data()
+    df = load_data(train_path="data/train.csv", store_path="data/store.csv", store_id=1)
     eda_summary(df)
     train_df, test_df, X_train, X_test, y_train, y_test = preprocess(df)
 
-    # Step 3: ARIMA
-    print("\n📊 STEP 3: Training ARIMA model...")
+    # Step 2: ARIMA
+    print("\n📊 STEP 2: Training ARIMA model...")
     from models.arima_model import run_arima
     arima_preds, arima_metrics = run_arima(train_df, test_df)
 
-    # Step 4: LSTM (optional — needs TensorFlow)
-    print("\n📊 STEP 4: Training LSTM model...")
+    # Step 3: LSTM (optional — needs TensorFlow)
+    print("\n📊 STEP 3: Training LSTM model...")
     try:
         import tensorflow
         from models.lstm_model import run_lstm
@@ -57,7 +49,7 @@ def main():
     print("\n" + "=" * 60)
     print("✅ All steps complete!")
     print("\n🚀 Launch the dashboard:")
-    print("   streamlit run dashboard/app.py")
+    print("   python -m streamlit run dashboard/app.py")
     print("=" * 60)
 
 

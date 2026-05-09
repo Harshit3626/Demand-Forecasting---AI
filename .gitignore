@@ -1,0 +1,32 @@
+# Dataset files (too large for GitHub)
+data/train.csv
+data/test.csv
+data/store.csv
+data/sample_submission.csv
+data/*.png
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Models (large files)
+models/*.h5
+models/*.pkl
+
+# Virtual environment
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
